@@ -1,0 +1,5 @@
+package: github.com/lucasmbaia/go-environment
+import:
+- package: github.com/coreos/etcd
+  version: 3.2.1
+- package: golang.org/x/net/context
