@@ -95,7 +95,6 @@ func setField(f reflect.Value, value interface{}, getTag, defaultTag bool) error
   var (
     err		error
     i		interface{}
-    v		reflect.Value
     t		reflect.Type
     env		string
     str		string
@@ -121,23 +120,22 @@ func setField(f reflect.Value, value interface{}, getTag, defaultTag bool) error
   case reflect.Bool:
     f.SetBool(value.(bool))
   case reflect.Struct:
-    v =	reflect.ValueOf(value)
-    t = v.Type()
+    t = f.Type()
 
     if getTag {
-      for i := 0; i < v.NumField(); i++ {
+      for i := 0; i < f.NumField(); i++ {
 	if tag, ok := t.FieldByName(t.Field(i).Name); ok {
 	  str = tag.Tag.Get("env")
 
 	  if str != "" {
 	    if env = os.Getenv(str); env != "" {
-	      if err = setField(v.Field(i), env, getTag, defaultTag); err != nil {
+	      if err = setField(f.Field(i), env, getTag, defaultTag); err != nil {
 		return err
 	      }
 	    } else {
 	      if defaultTag {
 		if tag.Tag.Get("envDefault") != "" {
-		  if err = setField(v.Field(i), tag.Tag.Get("envDefault"), getTag, defaultTag); err != nil {
+		  if err = setField(f.Field(i), tag.Tag.Get("envDefault"), getTag, defaultTag); err != nil {
 		    return err
 		  }
 		}
@@ -146,7 +144,7 @@ func setField(f reflect.Value, value interface{}, getTag, defaultTag bool) error
 	  } else {
 	    if defaultTag {
 	      if tag.Tag.Get("envDefault") != "" {
-		if err = setField(v.Field(i), tag.Tag.Get("envDefault"), getTag, defaultTag); err != nil {
+		if err = setField(f.Field(i), tag.Tag.Get("envDefault"), getTag, defaultTag); err != nil {
 		  return err
 		}
 	      }
@@ -155,16 +153,16 @@ func setField(f reflect.Value, value interface{}, getTag, defaultTag bool) error
 	}
       }
     } else {
-      for i := 0; i < v.NumField(); i++ {
+      for i := 0; i < f.NumField(); i++ {
 	if env = os.Getenv(t.Field(i).Name); env != "" {
-	  if err = setField(v.Field(i), env, getTag, defaultTag); err != nil {
+	  if err = setField(f.Field(i), env, getTag, defaultTag); err != nil {
 	    return err
 	  }
 	} else {
 	  if defaultTag {
 	    if tag, ok := t.FieldByName(t.Field(i).Name); ok {
 	      if tag.Tag.Get("envDefault") != "" {
-		if err = setField(v.Field(i), tag.Tag.Get("envDefault"), getTag, defaultTag); err != nil {
+		if err = setField(f.Field(i), tag.Tag.Get("envDefault"), getTag, defaultTag); err != nil {
 		  return err
 		}
 	      }
