@@ -212,17 +212,24 @@ func setField(f reflect.Value, value interface{}) error {
     objSlice = value.([]interface{})
 
     for _, obj := range objSlice {
-      objMap = obj.(map[string]interface{})
       r = reflect.New(f.Type().Elem())
       t = r.Type()
 
-      for i := 0; i < r.Elem().NumField(); i++ {
-	if tag, ok := t.Elem().FieldByName(t.Elem().Field(i).Name); ok {
-	  str = tag.Tag.Get("env")
+      if reflect.ValueOf(obj).Kind() == reflect.String {
+	if err = setField(r.Elem(), obj); err != nil {
+	  return err
+	}
+      } else {
+	objMap = obj.(map[string]interface{})
 
-	  if _, ok := objMap[str]; ok {
-	    if err = setField(r.Elem().Field(i), objMap[str]); err != nil {
-	      return err
+	for i := 0; i < r.Elem().NumField(); i++ {
+	  if tag, ok := t.Elem().FieldByName(t.Elem().Field(i).Name); ok {
+	    str = tag.Tag.Get("env")
+
+	    if _, ok := objMap[str]; ok {
+	      if err = setField(r.Elem().Field(i), objMap[str]); err != nil {
+		return err
+	      }
 	    }
 	  }
 	}
