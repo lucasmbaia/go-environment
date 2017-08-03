@@ -215,11 +215,12 @@ func setField(f reflect.Value, value interface{}) error {
       r = reflect.New(f.Type().Elem())
       t = r.Type()
 
-      if reflect.ValueOf(obj).Kind() == reflect.String {
+      switch reflect.ValueOf(obj).Kind() {
+      case reflect.String, reflect.Int, reflect.Int32, reflect.Int64, reflect.Uint, reflect.Uint32, reflect.Uint64, reflect.Float64, reflect.Bool:
 	if err = setField(r.Elem(), obj); err != nil {
 	  return err
 	}
-      } else {
+      default:
 	objMap = obj.(map[string]interface{})
 
 	for i := 0; i < r.Elem().NumField(); i++ {
