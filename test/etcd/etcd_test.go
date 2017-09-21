@@ -81,7 +81,7 @@ func TestEtcdSetMapVariable(t *testing.T) {
   var (
     client  etcd.Client
     err	    error
-    teste   = map[string]string{"teste": "teste"}
+    teste   = map[string]string{"teste": "teste", "teste2": "teste2"}
   )
 
   if client, err = connectEtcd(); err != nil {
