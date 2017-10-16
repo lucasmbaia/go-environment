@@ -1,5 +1,5 @@
 package: github.com/lucasmbaia/go-environment
 import:
 - package: github.com/coreos/etcd/client
-  version: 3.2.7
+  version: 3.2.9
 - package: golang.org/x/net/context
